@@ -1,7 +1,7 @@
 #Solstice API Demo Script!
 #THIS ONLY WORKS WITH PYTHON 2.7.  If you are running 3.6, you will need different commands. 
 #This version exposes every command available using GET through /stats or /config, even though some repeat information.
-#All calls are exposed here, even those that are Pod or Software (not supported) specific, so not every value will be populated in the results. 
+#All calls are exposed here, even those that are Pod or Software specific, so not every value will be populated in the results. 
 #This script prints formatted results to console.
 
 #import necessary packages:
@@ -58,7 +58,7 @@ rc=requests.get(myconfigurl)
 rstats=eval(rs.text)
 rconfig=eval(rc.text)
 
-
+print rconfig
 
 ##### Stats printed in the order shown in the API User Guide #####
 print "--------STATS--------"
@@ -87,7 +87,8 @@ print "Product Variant:", rstats.get('m_displayInformation',{}).get('m_productVa
 
 #m_productHardwareVersion: POD ONLY paramenter returns variant information in integer format
 #Returns int 
-print "Hardware Version:", rstats.get('m_displayInformation',{}).get('m_productHardwareVersion')
+hardwareversion = rstats.get('m_displayInformation',{}).get('m_productHardwareVersion')
+print "Hardware Version:", hardwareversion
 
 ###m_statistics group key
 
@@ -204,7 +205,7 @@ print "Bring to Foreground on Connection:", rconfig.get('m_generalCuration',{}).
 print "Launch on Host Boot:", rconfig.get('m_generalCuration',{}).get('launchOnSystemStart')
 
 #theme: WINDOWS ONLY - WINDOWS ONLY select a background color scheme using a value 1-6
-#Returns an integer 1 thru 6
+#Returns an integer 0 thru 5
 print "Theme Number:", rconfig.get('m_generalCuration',{}).get('theme')
 
 #advancedRenderingEnabled: WINDOWS ONLY - enable (1) or disable (0) advanced rendering for better animations at the expense of host PC processing cycles
@@ -224,13 +225,13 @@ if winmode == 1:
 if winmode == 2:
 	print "Window Mode: Fullscreen"
 
-#windowsLeft: WINDOWS ONLY - if winmode = 1, this is the left coordinate for the fixed window 
+#windowLeft: WINDOWS ONLY - if winmode = 1, this is the left coordinate for the fixed window 
 #Returns int
-print "Window Left:", rconfig.get('m_generalCuration',{}).get('windowsLeft')
+print "Window Left:", rconfig.get('m_generalCuration',{}).get('windowLeft')
 
-#windowsTop: WINDOWS ONLY - if winmode = 1, this is the top coordinate for the fixed window 
+#windowTop: WINDOWS ONLY - if winmode = 1, this is the top coordinate for the fixed window 
 #Returns int
-print "Window Top:", rconfig.get('m_generalCuration',{}).get('windowsTop')
+print "Window Top:", rconfig.get('m_generalCuration',{}).get('windowTop')
 
 #windowWidth: WINDOWS ONLY - if winmode = 1, this is the fixed window width in pixels
 #Returns int
@@ -663,10 +664,13 @@ print "Non-default NTP Server:", rconfig.get('m_systemCuration',{}).get('ntpServ
 #print "Total Epoch Time:", rconfig.get('m_systemCuration',{}).get('dateTime')
 #convert epoch time to datetime in mm/dd/yy 24hr:mm:ss format
 totaltime = rconfig.get('m_systemCuration',{}).get('dateTime')
-print "Current Date and Time:", datetime.datetime.fromtimestamp((totaltime/1000)).strftime('%c')
+
+#since the software won't return a time, we can only show this value in date form for pods. 
+if hardwareversion == 9999:
+	print "Total Time:",totaltime
+else:
+	print "Current Date and Time:", datetime.datetime.fromtimestamp((totaltime/1000)).strftime('%c')
 print "\n"
 
 #Shut it down (on your own terms, if running the program directly) 
 end = raw_input("Press any key to exit")
-
-
