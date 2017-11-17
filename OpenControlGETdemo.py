@@ -96,9 +96,9 @@ print "Hardware Version:", hardwareversion
 #Returns int
 print "Current Post Count:", rstats.get('m_statistics',{}).get('m_currentPostCount')
 
-#m_currentBandwith: Yes, this is a typo.  I don't want to talk about it.  
+#m_currentBandwidth: was erroneously called "m_currentBandwith" before 11/17/17.  
 #Returns int with units Mbps.  May be 0 if display is unused or if current content is inactive. 
-print "Current Bandwidth:", rstats.get('m_statistics',{}).get('m_currentBandwith')
+print "Current Bandwidth:", rstats.get('m_statistics',{}).get('m_currentBandwidth')
 
 #m_connectedUsers: number of users currently connected to the display
 #Returns int
